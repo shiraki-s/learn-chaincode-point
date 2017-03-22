@@ -43,7 +43,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	return nil, nil
+	return t.init(stub, args)
 }
 
 // Invoke is our entry point to invoke a chaincode function
@@ -81,7 +81,7 @@ func (t *SimpleChaincode) init(stub shim.ChaincodeStubInterface, args []string) 
   var err error
   fmt.Println("running init()")
 
-  if len(args) != 2 {
+  if len(args) < 2 {
     return nil, errors.New("Incorrect number of arguments. Expecting 2 name of the key and value to set")
   }
   length = len(args)
