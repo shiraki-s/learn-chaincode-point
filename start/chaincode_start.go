@@ -53,8 +53,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 	// Handle different functions
 
-	if function == "init" {													//initialize the chaincode state, used as reset
-		return t.Init(stub, "init", args)
+	if function == "set" {													//initialize the chaincode state, used as reset
+		return t.set(stub, args)
 	}
 
 	fmt.Println("invoke did not find func: " + function)					//error
@@ -68,9 +68,8 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 
 	// Handle different functions
 
-	if function == "dummy_query" {											//read a variable
-		fmt.Println("hi there " + function)						//error
-		return nil, nil;
+	if function == "get" {											//read a variable
+		return t.get(stub, args)
 
 	}
 	fmt.Println("query did not find func: " + function)						//error
@@ -79,10 +78,10 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 }
 
 
-func (t *SimpleChaincode) send(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *SimpleChaincode) set(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
   var key, value string
   var err error
-  fmt.Println("running send()")
+  fmt.Println("running set()")
 
   if len(args) != 2 {
     return nil, errors.New("Incorrect number of arguments. Expecting 2 name of the key and value to set")
@@ -97,7 +96,7 @@ func (t *SimpleChaincode) send(stub shim.ChaincodeStubInterface, args []string) 
   return nil, nil
 }
 
-func (t *SimpleChaincode) read(stub * shim.ChaincodeStub, args []string) ([]byte, error) {
+func (t *SimpleChaincode) get(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
   var key, jsonResp string
   var err error
