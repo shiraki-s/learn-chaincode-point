@@ -19,6 +19,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -77,9 +78,9 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	return nil, errors.New("Received unknown function query: " + function)
 }
 
-
 func (t *SimpleChaincode) set(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-  var key, value string
+  var key string
+  var value int
   var err error
   fmt.Println("running set()")
 
@@ -88,8 +89,14 @@ func (t *SimpleChaincode) set(stub shim.ChaincodeStubInterface, args []string) (
   }
 
   key = args[0]
-  value = args[1]
-  err = stub.PutState(key, []byte(value))
+  value, err = strconv.Atoi(args[1])
+  
+  if err != nil {
+		return nil, errors.New("Expecting integer value for asset holding")
+  }
+  
+  err = stub.PutState(key, []byte(strconv.Itoa(value)))
+  
   if err != nil {
     return nil, err
   }
