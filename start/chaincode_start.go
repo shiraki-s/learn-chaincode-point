@@ -19,7 +19,6 @@ package main
 import (
 	"errors"
 	"fmt"
-
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -39,11 +38,13 @@ func main() {
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	return nil, nil
+    return nil, nil
+
 }
 
 // Invoke is our entry point to invoke a chaincode function
@@ -51,9 +52,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	fmt.Println("invoke is running " + function)
 
 	// Handle different functions
+
 	if function == "init" {													//initialize the chaincode state, used as reset
 		return t.Init(stub, "init", args)
-
 	}
 
 	fmt.Println("invoke did not find func: " + function)					//error
@@ -76,6 +77,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 
 	return nil, errors.New("Received unknown function query: " + function)
 }
+
 
 func (t *SimpleChaincode) send(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
   var key, value string
