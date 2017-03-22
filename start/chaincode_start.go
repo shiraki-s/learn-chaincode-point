@@ -19,7 +19,7 @@ package main
 import (
 	"errors"
 	"fmt"
-
+    "strconv"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -39,12 +39,13 @@ func main() {
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
     return nil, nil
-	//return t.init(stub, args)
+
 }
 
 // Invoke is our entry point to invoke a chaincode function
@@ -52,8 +53,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	fmt.Println("invoke is running " + function)
 
 	// Handle different functions
-	if function == "init" {													//initialize the chaincode state, used as reset
-		return t.Init(stub, "init", args)
+	if function == "set" {													//initialize the chaincode state, used as reset
+		return t.set(stub, args)
 	}else if function == "send" {
 		return t.send(stub, args)
 	}
@@ -76,28 +77,29 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	return nil, errors.New("Received unknown function query: " + function)
 }
 
-func (t *SimpleChaincode) init(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-  var value string
-  var length int
+func (t *SimpleChaincode) set(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+  var key string
+  var value int
   var err error
-  fmt.Println("running init()")
+  
+  fmt.Println("running set()")
 
-  if len(args) < 2 {
+  if len(args) != 2 {
     return nil, errors.New("Incorrect number of arguments. Expecting 2 name of the key and value to set")
   }
-  length = len(args)
-  value = args[length - 1]
-  
-  for i := 0; i < length - 1; i++ {
-  
-        err = stub.PutState(args[i], []byte(value))
-        
-        if err != nil {
-          return nil, err
-        }
+
+  key = args[0]
+  value, err = strconv.Atoi(args[1])
+  if err != nil {
+		return nil, errors.New("Expecting integer value for asset holding")
   }
-
-
+  
+  err = stub.PutState(key, []byte(strconv.Itoa(value)))
+  
+  if err != nil {
+    return nil, err
+  }
+  
   return nil, nil
 }
 
