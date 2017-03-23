@@ -96,8 +96,7 @@ func (t *SimpleChaincode) send(stub shim.ChaincodeStubInterface, args []string) 
 	A = args[0]
 	B = args[1]
 
-	// Get the state from the ledger
-	// TODO: will be nice to have a GetAllState call to ledger
+
 	Avalbytes, err := stub.GetState(A)
 	if err != nil {
 		return nil, errors.New("Failed to get state")
@@ -118,6 +117,11 @@ func (t *SimpleChaincode) send(stub shim.ChaincodeStubInterface, args []string) 
 
 	// Perform the execution
 	X, err = strconv.Atoi(args[2])
+	  
+    if err != nil {
+		return nil, errors.New("Expecting integer value for asset holding")
+    }
+    
 	Aval = Aval - X
 	Bval = Bval + X
 	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
